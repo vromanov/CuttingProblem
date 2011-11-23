@@ -9,11 +9,13 @@ int MainController::s_iRunCount = 0;
 MainController::MainController(void)
 : m_CurrentState(NONE)
 {
+	return;
 }
 
 
 MainController::~MainController(void)
 {
+	return;
 }
 
 
