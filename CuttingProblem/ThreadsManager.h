@@ -10,7 +10,18 @@ public:
 	ThreadsManager(void);
 	~ThreadsManager(void);
 
-	void	Run(/*Threadable* pThread*/);
+	template<typename T>
+	void Run(T* pThread)
+	{
+		for (size_t i = 0; i < THREAD_COUNT; ++i)
+		{
+			pThread = new T;
+			pThread->Register(this);
+			pThread->Create();
+			pThread->Run();
+		}
+	}
+
 	void	OnThreadsFinish();
 
 	void	Register(ThreadCallback* pCallBack) { m_pCallback = pCallBack; }

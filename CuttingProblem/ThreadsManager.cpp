@@ -14,18 +14,7 @@ ThreadsManager::~ThreadsManager(void)
 {
 }
 
-void ThreadsManager::Run( /*Threadable* pThread */)
-{
-	ICrossingover* pThread = NULL;
 
-	for (size_t i = 0; i < THREAD_COUNT; ++i)
-	{
-		pThread = new ICrossingover;
-		pThread->Register(this);
-		pThread->Create();
-		pThread->Run();
-	}
-}
 
 void ThreadsManager::OnThreadsFinish()
 {
