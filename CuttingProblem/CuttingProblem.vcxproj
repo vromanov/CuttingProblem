@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="CrossingoverOX.cpp" />
-    <ClCompile Include="ICrossingover.cpp" />
     <ClCompile Include="MainController.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="Population.cpp" />
