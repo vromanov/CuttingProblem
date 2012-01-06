@@ -1,33 +1,55 @@
 #include "MainController.h"
 
+#include "AgregatorTopLeft.h"
 #include "CrossingoverOX.h"
+
+#include "RectangleDB.h"
+#include "RectangleF.h"
+#include "RectangleDrawer.h"
+
+#include "Chromosome.h"
+#include "Population.h"
 
 #include <vector>
 
-int MainController::s_iRunCount = 0;
+size_t MainController::s_iCurrentIterationCount = 0;
 
-MainController::MainController(void)
-: m_CurrentState(NONE)
+MainController::MainController(RectangleDrawer* pRectangleDrawer)
+	: m_CurrentState(NONE)
+	, m_pRectangleDrawer(pRectangleDrawer)
+	, m_pPopulation(NULL)
+	, m_bTimeStarted(false)
 {
+	return;
 }
 
 
 MainController::~MainController(void)
 {
+	if (m_pPopulation)
+	{
+		m_pPopulation->Clear();
+		delete m_pPopulation;
+	}
+	return;
 }
 
 
 void MainController::OnThreadsFinish()
 {
+	wxLogDebug ("OnThreadsFinish");
+
 	m_CriticalSection.Enter();
-	
-	CrossingoveOX* pCrossingover = NULL;
+
+	CrossingoverOX*		pCrossingover = NULL;
+	AgregatorTopLeft*	pAgregator = NULL;
 
 	switch(m_CurrentState)
 	{
 	case CROSSINGOVER:
 		wxLogDebug ("OnThreadsFinish. state == CROSSINGOVER");
-		m_CurrentState = MUTATOR;
+		++s_iCurrentIterationCount;
+		m_CurrentState = PLACEMENT;
 		DoRun(pCrossingover);
 		break;
 	case MUTATOR:
@@ -37,18 +59,18 @@ void MainController::OnThreadsFinish()
 		break;
 	case SELECTOR:
 		wxLogDebug ("OnThreadsFinish. state == SELECTOR");
-		++s_iRunCount;
 		m_CurrentState = NONE;
 		DoRun(pCrossingover);
 		break;
 	case PLACEMENT:
 		wxLogDebug ("OnThreadsFinish. state == PLACEMENT");
 		m_CurrentState = CROSSINGOVER;
-		DoRun(pCrossingover);
+		DoRun(pAgregator);
 		break;
 	default:
 		break;
 	}
+
 	m_CriticalSection.Leave();
 }
 
@@ -56,6 +78,16 @@ void MainController::Run()
 {
 	wxLogDebug("MainController::Run called");
 
-	CrossingoveOX* pCrossingover = NULL;
-	DoRun(pCrossingover);
+	DB::CreateDB("tests/test.txt");
+
+	if (m_pPopulation)
+	{
+		m_pPopulation->Clear();
+		delete m_pPopulation;
+	}
+	m_pPopulation = Population::GenerateRandPopulation(CHROMOSOME_COUNT);
+
+
+	m_CurrentState = PLACEMENT;
+	OnThreadsFinish();
 }

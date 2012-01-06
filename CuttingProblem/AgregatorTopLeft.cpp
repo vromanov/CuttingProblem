@@ -20,19 +20,23 @@ AgregatorTopLeft::~AgregatorTopLeft()
 
 void AgregatorTopLeft::DoEntry( void )
 {
-	wxLogDebug("AgregatorTopLeft::DoEntry called");
+	//wxLogDebug("AgregatorTopLeft::DoEntry called");
 
-	while (true)
+	while (s_iChromosomeIndex < m_pPopulation->GetChromosomes().size())
 	{
-		m_CriticalSection.Enter();
+		s_CriticalSection.Enter();
 		if (s_iChromosomeIndex >= m_pPopulation->GetChromosomes().size())
-			break;
+		{
+			s_CriticalSection.Leave();
+			continue;
+		}
 		Chromosome* pChromosome = m_pPopulation->GetChromosomes()[s_iChromosomeIndex];
 		++s_iChromosomeIndex;
-		m_CriticalSection.Leave();
+		s_CriticalSection.Leave();
 
 		if (pChromosome->IsPlacement())
 		{
+			wxLogDebug("AgregatorTopLeft::DoEntry pChromosome is placement");
 			continue;
 		}
 
@@ -44,8 +48,6 @@ void AgregatorTopLeft::DoEntry( void )
 				pRectangle->SetPosition(pRectangle->GetBottomRight());
 				SetRectangleOnField(pRectangle, pChromosome->GetRectangleDB());
 				pRectangle->SetStatus(ON_FIELD);
-				m_CriticalSection.Enter();
-				m_CriticalSection.Leave();
 			}
 		}
 

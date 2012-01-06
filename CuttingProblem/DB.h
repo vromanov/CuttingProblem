@@ -20,6 +20,6 @@ private:
 	void			LoadRectangles( const char* file );
 	RectangleF*		ParseLineToRectangle( std::string& line );
 
-	static DB*	s_pDB;
+	static DB*					s_pDB;
 	std::vector<RectangleF*>	m_pInitRectangles;
 };

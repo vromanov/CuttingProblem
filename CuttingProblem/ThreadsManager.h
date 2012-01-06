@@ -3,6 +3,7 @@
 #include "ThreadCallback.h"
 
 class Threadable;
+class Population;
 
 class ThreadsManager : public ThreadCallback
 {
@@ -11,11 +12,11 @@ public:
 	~ThreadsManager(void);
 
 	template<typename T>
-	void Run(T* pThread)
+	void Run(T* pThread, Population* pPopulation)
 	{
 		for (size_t i = 0; i < THREAD_COUNT; ++i)
 		{
-			pThread = new T;
+			pThread = new T(pPopulation);
 			pThread->Register(this);
 			pThread->Create();
 			pThread->Run();

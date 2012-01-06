@@ -3,6 +3,7 @@
 #include "RectangleF.h"
 
 #include "wx/wx.h"
+#include "wx/thread.h"
 
 #include <fstream>
 
@@ -71,7 +72,6 @@ RectangleF* DB::ParseLineToRectangle( std::string& line )
 /*static*/void DB::Copy(const std::vector<RectangleF*>& from, std::vector<RectangleF*>& to)
 {
 	to.reserve(from.size());
-
 	std::vector<RectangleF*>::const_iterator it = from.begin();
 	while (it != from.end())
 	{
@@ -84,12 +84,12 @@ RectangleF* DB::ParseLineToRectangle( std::string& line )
 
 /*static*/void DB::CopyTo(std::vector<RectangleF*>& newDB)
 {
+	
 	if (!s_pDB)
 	{
 		wxLogDebug("DB is not initialized");
 		return;
 	}
-
 	DB::Copy(s_pDB->m_pInitRectangles, newDB);
 }
 
@@ -113,6 +113,8 @@ RectangleF* DB::ParseLineToRectangle( std::string& line )
 
 void DB::CleanDB( std::vector<RectangleF*>& db )
 {
+	if (db.empty())
+		return;
 	std::vector<RectangleF*>::iterator it = db.begin();
 	while (it != db.end())
 	{
@@ -122,4 +124,4 @@ void DB::CleanDB( std::vector<RectangleF*>& db )
 	db.clear();
 }
 
-DB*	DB::s_pDB = NULL;
+DB*					DB::s_pDB = NULL;

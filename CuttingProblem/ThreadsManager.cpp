@@ -1,8 +1,6 @@
 #include "ThreadsManager.h"
 
-#include "Utils.h"
-#include "ICrossingover.h"
-#include "Threadable.h"
+#include "wx/wx.h"
 
 ThreadsManager::ThreadsManager(void)
 : m_pCallback(NULL)

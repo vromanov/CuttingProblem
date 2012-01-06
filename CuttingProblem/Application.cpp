@@ -4,10 +4,11 @@
 // 'Main program' equivalent: the program execution "starts" here
 bool Application::OnInit()
 {
+#ifdef _DEBUG
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 	_CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
-
-    srand(time(NULL));
+	//_CrtSetBreakAlloc(1331301);
+#endif
 
     // call the base class initialization method, currently it only parses a
     // few common command-line options but it could be do more in the future

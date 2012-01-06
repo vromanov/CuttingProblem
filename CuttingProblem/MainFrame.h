@@ -37,6 +37,8 @@ enum
     Minimal_About = wxID_ABOUT
 };
 
+class RectangleDrawer;
+
 // Define a new frame type: this is going to be our main frame
 class MainFrame : public wxFrame
 {
@@ -51,7 +53,9 @@ public:
 	void        OnButtonTestClick(wxCommandEvent &event);
 
 private:
-	MainController	m_MainController;
+	RectangleDrawer*	m_pRectangleDraw;
+	MainController*		m_pMainController;
+
 
     // any class wishing to process wxWidgets events must use this macro
     DECLARE_EVENT_TABLE()

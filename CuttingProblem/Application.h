@@ -1,7 +1,10 @@
 // For compilers that support precompilation, includes "wx/wx.h".
+
+#ifdef _DEBUG
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
+#endif
 
 #include "wx/wxprec.h"
  

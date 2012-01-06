@@ -1,37 +1,74 @@
 #include "CrossingoverOX.h"
 
-float CrossingoveOX::j = 1;
+#include "Chromosome.h"
 
-CrossingoveOX::CrossingoveOX()
+#include "wx/wx.h"
+
+CrossingoverOX::CrossingoverOX( Population* pPopulation )
+: ICrossingover(pPopulation)
 {
 
 }
 
-CrossingoveOX::~CrossingoveOX()
+CrossingoverOX::~CrossingoverOX()
 {
 
 }
 
-void CrossingoveOX::DoEntry( void )
+size_t CrossingoverOX::GetCrossPoint(size_t chromosomeSize)
 {
-	z = 1000;
-	wxLogDebug("ICrossingover::DoEntry called");
+	size_t crossPoint = rand() % chromosomeSize;
 
-	while (j < 1000)
+	while (crossPoint < 1 || crossPoint == chromosomeSize - 1)
 	{
-		m_CriticalSection.Enter();
-		j += 0.1f;
-		m_CriticalSection.Leave();
-
-		for (float i = 1; i < 10000; i += 0.9f)
-		{
-			x = i;
-			z /= x;
-		}				
+		crossPoint = rand() % chromosomeSize;
 	}
+
+	return crossPoint;
 }
 
-void CrossingoveOX::DoExit( void )
+Chromosome* CrossingoverOX::DoCrossingover( Chromosome* pParent0, Chromosome* pParent1 )
 {
-	j = 1;
+	//wxLogDebug("CrossingoveOX::DoCrossingover called");
+
+	const size_t CHROMOSOME_SIZE = pParent0->Size();
+	const size_t FIRST_PART = GetCrossPoint(CHROMOSOME_SIZE);
+
+	Chromosome* pChild = new Chromosome(CHROMOSOME_SIZE);
+
+	for (size_t i = 0, i_end = FIRST_PART; i < i_end; ++i)
+		pChild->SetGene(i, pParent0->GetGene(i));
+
+	size_t next = FIRST_PART;
+	bool willAdded = true;
+
+	for (size_t i = 0, i_end = CHROMOSOME_SIZE; i < i_end; ++i)
+	{
+		// set flag for " add to child"
+		willAdded = true;
+
+		// try to find this elem in child
+		for (size_t j = 0; j < FIRST_PART; ++j)
+		{
+			// if found set flag for "don't add to child"
+			if (pChild->GetGene(j) == pParent1->GetGene(i))
+			{
+				willAdded = false;
+				break;
+			}
+		}
+
+		// don't add to child
+		if (!willAdded)
+			continue;
+
+		// else if elem don't found 
+		// we're adding it to child
+		pChild->SetGene(next, pParent1->GetGene(i));
+		++next;
+	}
+
+	return pChild;
 }
+
+

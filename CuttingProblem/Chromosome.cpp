@@ -1,15 +1,39 @@
 #include "Chromosome.h"
 
-Chromosome::Chromosome()
+Chromosome::Chromosome(size_t uiGeneCount)
 : m_fFitnessValue(0)
 , m_bIsPlacement(false)
 {
-
+	m_iRectangleQueue.resize(uiGeneCount);
 }
 
 Chromosome::~Chromosome()
 {
 	m_iRectangleQueue.clear();
+}
+
+Chromosome::Chromosome( const Chromosome& pChromosome)
+{
+	m_iRectangleQueue.clear();
+	m_RectanglePlacement.Clear();
+
+	m_iRectangleQueue = pChromosome.m_iRectangleQueue;
+	m_RectanglePlacement = pChromosome.m_RectanglePlacement;
+	m_fFitnessValue = pChromosome.m_fFitnessValue;
+	m_bIsPlacement = pChromosome.m_bIsPlacement;
+}
+
+Chromosome& Chromosome::operator=(const Chromosome& pChromosome)
+{
+	m_iRectangleQueue.clear();
+	m_RectanglePlacement.Clear();
+
+	m_iRectangleQueue = pChromosome.m_iRectangleQueue;
+	m_RectanglePlacement = pChromosome.m_RectanglePlacement;
+	m_fFitnessValue = pChromosome.m_fFitnessValue;
+	m_bIsPlacement = pChromosome.m_bIsPlacement;
+
+	return *this;
 }
 
 /*static*/Chromosome* Chromosome::GenerateRandChromosome()

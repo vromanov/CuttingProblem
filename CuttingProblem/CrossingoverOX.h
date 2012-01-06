@@ -2,18 +2,15 @@
 
 #include "ICrossingover.h"
 
-class CrossingoveOX : public ICrossingover
+class Chromosome;
+
+class CrossingoverOX : public ICrossingover
 {
 public:
-	CrossingoveOX();
-	~CrossingoveOX();
+	CrossingoverOX(Population* pPopulation);
+	~CrossingoverOX();
 private:
-	wxCriticalSection m_CriticalSection;
+	size_t				GetCrossPoint(size_t chromosomeSize);
 
-	virtual void	DoEntry(void);
-	virtual void	DoExit();
-
-	// for test
-	static float j;
-	long x, z;
+	virtual	Chromosome* DoCrossingover(Chromosome* parent0, Chromosome* parent1);
 };

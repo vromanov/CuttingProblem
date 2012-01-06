@@ -19,25 +19,44 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp" />
-    <ClCompile Include="CrossingoverOX.cpp" />
-    <ClCompile Include="MainController.cpp" />
-    <ClCompile Include="MainFrame.cpp" />
-    <ClCompile Include="Population.cpp" />
-    <ClCompile Include="Threadable.cpp" />
-    <ClCompile Include="ThreadsManager.cpp" />
+    <ClCompile Include="src\AgregatorTopLeft.cpp" />
+    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Chromosome.cpp" />
+    <ClCompile Include="src\CrossingoverOX.cpp" />
+    <ClCompile Include="src\DB.cpp" />
+    <ClCompile Include="src\FieldController.cpp" />
+    <ClCompile Include="src\ICrossingover.cpp" />
+    <ClCompile Include="src\MainController.cpp" />
+    <ClCompile Include="src\MainFrame.cpp" />
+    <ClCompile Include="src\Matrix.cpp" />
+    <ClCompile Include="src\Population.cpp" />
+    <ClCompile Include="src\RectangleDB.cpp" />
+    <ClCompile Include="src\RectangleDrawer.cpp" />
+    <ClCompile Include="src\RectangleF.cpp" />
+    <ClCompile Include="src\Threadable.cpp" />
+    <ClCompile Include="src\ThreadsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="CrossingoverOX.h" />
-    <ClInclude Include="Threadable.h" />
-    <ClInclude Include="ThreadsManager.h" />
-    <ClInclude Include="Utils.h" />
-    <ClInclude Include="ICrossingover.h" />
-    <ClInclude Include="MainController.h" />
-    <ClInclude Include="MainFrame.h" />
-    <ClInclude Include="Population.h" />
-    <ClInclude Include="ThreadCallback.h" />
+    <ClInclude Include="src\AgregatorTopLeft.h" />
+    <ClInclude Include="src\Application.h" />
+    <ClInclude Include="src\Chromosome.h" />
+    <ClInclude Include="src\CrossingoverOX.h" />
+    <ClInclude Include="src\DB.h" />
+    <ClInclude Include="src\FieldController.h" />
+    <ClInclude Include="src\IAgregator.h" />
+    <ClInclude Include="src\ICrossingover.h" />
+    <ClInclude Include="src\MainController.h" />
+    <ClInclude Include="src\MainFrame.h" />
+    <ClInclude Include="src\Matrix.h" />
+    <ClInclude Include="src\Population.h" />
+    <ClInclude Include="src\RectangleDB.h" />
+    <ClInclude Include="src\RectangleDrawer.h" />
+    <ClInclude Include="src\RectangleF.h" />
+    <ClInclude Include="src\Threadable.h" />
+    <ClInclude Include="src\ThreadCallback.h" />
+    <ClInclude Include="src\ThreadsManager.h" />
+    <ClInclude Include="src\Utils.h" />
+    <ClInclude Include="src\Vector2F.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6872CD8D-D745-4F5E-ABE1-DC923D0380E2}</ProjectGuid>

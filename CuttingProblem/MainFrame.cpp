@@ -1,4 +1,5 @@
 #include "MainFrame.h"
+#include "RectangleDrawer.h"
 
 #include <ctime>
 
@@ -8,7 +9,9 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 END_EVENT_TABLE()
 
 MainFrame::MainFrame(const wxString& title)
-    : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(800, 800))
+: wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(800, 800))
+, m_pRectangleDraw(NULL)
+, m_pMainController(NULL)
 {
     // set the frame icon
     SetIcon(wxICON(sample));
@@ -33,18 +36,21 @@ MainFrame::MainFrame(const wxString& title)
 #if wxUSE_STATUSBAR
     // create a status bar just for fun (by default with 1 pane only)
     CreateStatusBar(2);
-    SetStatusText(_T("Welcome to wxWidgets!"));
+    SetStatusText(_T("Welcome to Cutting proGRAM!"));
 #endif // wxUSE_STATUSBAR
 
+	m_pRectangleDraw = RectangleDrawer::CreateDrawer(this, 600, 600);
+	m_pMainController = new MainController(m_pRectangleDraw);
     wxSizer* vsizer = new wxBoxSizer(wxVERTICAL);
-    //vsizer->Add(m_pCanvas, 1, wxEXPAND);
+    vsizer->Add(m_pRectangleDraw, 1, wxEXPAND);
     //vsizer->Add(m_pBtnTest, 0, wxALIGN_RIGHT);
     this->SetSizer(vsizer);
 }
 
 MainFrame::~MainFrame()
 {
-    return;
+	delete m_pMainController;
+    RectangleDrawer::DeleteDrawer();
 }
 
 void MainFrame::OnButtonTestClick(wxCommandEvent& WXUNUSED(event))
@@ -54,14 +60,5 @@ void MainFrame::OnButtonTestClick(wxCommandEvent& WXUNUSED(event))
 void MainFrame::OnAbout( wxCommandEvent& WXUNUSED(event) )
 {
 	wxLogDebug("MainFrame::OnAbout called");
-	clock_t t0 = clock();
-
-	m_MainController.Run();
-
-	clock_t t1 = clock();
-	double time = (double)(t1 - t0) / CLOCKS_PER_SEC;
-
-	char str[32];
-	sprintf(str,"time = %f", time);
-	SetStatusText(_T(str));
+	m_pMainController->Run();
 }

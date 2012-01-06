@@ -7,6 +7,7 @@
 
 RectangleDB::RectangleDB()
 {
+	
 	if (!m_db.empty())
 	{
 		wxLogError("RectangleDB::Get() m_db is not empty");
@@ -27,6 +28,11 @@ const RectangleDB& RectangleDB::operator=(const RectangleDB& db)
 }
 
 RectangleDB::~RectangleDB()
+{
+	DB::CleanDB(m_db);
+}
+
+void RectangleDB::Clear()
 {
 	DB::CleanDB(m_db);
 }
