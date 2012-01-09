@@ -36,3 +36,9 @@ void RectangleDB::Clear()
 {
 	DB::CleanDB(m_db);
 }
+
+void RectangleDB::ReInit()
+{
+	DB::CleanDB(m_db);
+	DB::CopyTo(m_db);
+}

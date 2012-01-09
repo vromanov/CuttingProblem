@@ -10,7 +10,7 @@ public:
 	CrossingoverOX(Population* pPopulation);
 	~CrossingoverOX();
 private:
-	size_t				GetCrossPoint(size_t chromosomeSize);
+	virtual size_t		GetCrossPoint( Chromosome* pParent );
 
 	virtual	Chromosome* DoCrossingover(Chromosome* parent0, Chromosome* parent1);
 };

@@ -15,8 +15,10 @@ CrossingoverOX::~CrossingoverOX()
 
 }
 
-size_t CrossingoverOX::GetCrossPoint(size_t chromosomeSize)
+size_t CrossingoverOX::GetCrossPoint( Chromosome* pParent )
 {
+	size_t chromosomeSize = pParent->Size();
+
 	size_t crossPoint = rand() % chromosomeSize;
 
 	while (crossPoint < 1 || crossPoint == chromosomeSize - 1)
@@ -32,7 +34,7 @@ Chromosome* CrossingoverOX::DoCrossingover( Chromosome* pParent0, Chromosome* pP
 	//wxLogDebug("CrossingoveOX::DoCrossingover called");
 
 	const size_t CHROMOSOME_SIZE = pParent0->Size();
-	const size_t FIRST_PART = GetCrossPoint(CHROMOSOME_SIZE);
+	const size_t FIRST_PART = GetCrossPoint(pParent0);
 
 	Chromosome* pChild = new Chromosome(CHROMOSOME_SIZE);
 

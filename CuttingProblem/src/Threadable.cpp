@@ -2,9 +2,13 @@
 
 #include "ThreadCallback.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 Threadable::Threadable() : m_pCallback(NULL)
 {
-
+	
 }
 
 Threadable::~Threadable()
@@ -14,6 +18,7 @@ Threadable::~Threadable()
 
 void* Threadable::Entry( void )
 {
+	srand((unsigned)time(NULL));
 	DoEntry();
 	
 	s_CriticalSection.Enter();

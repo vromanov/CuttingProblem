@@ -3,7 +3,6 @@
 #include "RectangleF.h"
 #include "RectangleDB.h"
 
-
 #include <iostream>
 
 FieldController::FieldController(void)
@@ -37,7 +36,7 @@ void FieldController::GetProjection(const RectangleF* pRect, const Vector2F& dir
 
 }
 
-bool FieldController::Intersect(RectangleF* m0, const RectangleF* m1, bool bDirection)
+bool FieldController::Intersect(const RectangleF* m0, const RectangleF* m1, bool bDirection)
 {
 	Vector2F dir;
 
@@ -79,7 +78,118 @@ bool FieldController::Intersect(RectangleF* m0, const RectangleF* m1, bool bDire
 	return false;
 }
 
-std::vector<const RectangleF*> FieldController::FindIntersectedRectangles(RectangleF* pRectangle, const RectangleDB& rectangleDB, bool bDirection)
+float FieldController::GetHoleSquad(const RectangleF* pRectangle, const RectangleDB& db)
+{
+	std::vector<const RectangleF*> intersectedModels = FindIntersectedRectangles(pRectangle, db, VERTICAL_DIRECTION);
+
+	if (intersectedModels.empty())
+		return 0;
+
+	std::vector<Segment> modelTopLine;
+	modelTopLine.reserve(intersectedModels.size());
+
+
+	std::vector<const RectangleF*>::const_iterator it_intersectedModels = intersectedModels.begin();
+	while (it_intersectedModels != intersectedModels.end())
+	{
+		const RectangleF& rectangle = **it_intersectedModels;
+		Segment topSegment(rectangle.GetTopLeft(), Vector2F(rectangle.GetBottomRight().X(), rectangle.GetTopLeft().Y()));
+		modelTopLine.push_back(topSegment);
+		++it_intersectedModels;
+	}
+
+	Segment topSegment(Vector2F(pRectangle->GetTopLeft().X(), pRectangle->GetBottomRight().Y()), pRectangle->GetBottomRight());
+	LinesCalibrate(topSegment, modelTopLine);
+
+	return HoleSquad(topSegment, modelTopLine);
+}
+
+void FieldController::SortSegmetnsByY( std::vector<Segment>& modelTopLine )
+{
+	for (int i = 0, i_end = modelTopLine.size(); i < i_end; ++i)
+	{
+		for (int j = i, j_end = modelTopLine.size(); j < j_end; ++j)
+		{
+			if (modelTopLine[j].start().Y() < modelTopLine[i].start().Y())
+			{
+				Segment tmp = modelTopLine[j];
+				modelTopLine[j] = modelTopLine[i];
+				modelTopLine[i] = tmp;
+			}
+		}
+	}
+}
+
+void FieldController::LinesCalibrate( const Segment& topSegment, std::vector<Segment>& modelTopLine )
+{
+	std::vector<Segment>::iterator  it_modelTopLine = modelTopLine.begin();
+	while (it_modelTopLine != modelTopLine.end())
+	{
+		if (it_modelTopLine->start().X() < topSegment.start().X())
+			it_modelTopLine->start().X() = topSegment.start().X();
+		if (it_modelTopLine->end().X() > topSegment.end().X())
+			it_modelTopLine->end().X() = topSegment.end().X();
+		++it_modelTopLine;
+	}
+	SortSegmetnsByY(modelTopLine);
+
+
+	Segment temp(Vector2F(1.f, 1.f), Vector2F(5.f, 1.f));
+	bool res = temp.inside(Vector2F(1.f, 1.f));
+	res = temp.inside(Vector2F(5.f, 1.f));
+	res = temp.inside(Vector2F(4.f, 1.f));
+	res = temp.inside(Vector2F(5.1f, 1.f));
+	res = temp.inside(Vector2F(0.9f, 1.f));
+
+	for (int i = 0, i_end = modelTopLine.size(); i < i_end; ++i)
+	{
+		for (int j = i + 1, j_end = modelTopLine.size(); j < j_end; ++j)
+		{
+			bool startInside = (modelTopLine[i].start().X() <= modelTopLine[j].start().X()) && (modelTopLine[j].start().X() <= modelTopLine[i].end().X());
+			bool endInside = (modelTopLine[i].start().X() <= modelTopLine[j].end().X()) && (modelTopLine[j].end().X() <= modelTopLine[i].end().X());
+			if (startInside && endInside)
+			{
+				it_modelTopLine = modelTopLine.begin();
+				std::advance(it_modelTopLine, j);
+				modelTopLine.erase(it_modelTopLine);
+				i_end = j_end = modelTopLine.size();
+				i = j = 0;
+			}
+			else if (startInside)
+			{
+				modelTopLine[j].start().X() = modelTopLine[i].end().X();
+			}
+			else if (endInside)
+			{
+				modelTopLine[j].end().X() = modelTopLine[i].start().X();
+			}
+			else if (modelTopLine[i].start().X() > modelTopLine[j].start().X() && modelTopLine[i].end().X() < modelTopLine[j].end().X())
+			{
+				modelTopLine.push_back(Segment(modelTopLine[j].start(), Vector2F(modelTopLine[i].start().X(), modelTopLine[j].start().Y())));
+				modelTopLine.push_back(Segment(Vector2F(modelTopLine[i].end().X(), modelTopLine[j].end().Y()), modelTopLine[j].end()));
+				it_modelTopLine = modelTopLine.begin();
+				std::advance(it_modelTopLine, j);
+				modelTopLine.erase(it_modelTopLine);
+				i_end = j_end = modelTopLine.size();
+			}
+		}
+	}
+}
+
+float FieldController::HoleSquad( const Segment& topSegment, const std::vector<Segment>& modelTopLine )
+{
+	double holeSquad = 0;
+	for (int i = 0, i_end = modelTopLine.size(); i < i_end; ++i)
+	{
+		double a_length = modelTopLine[i].length();
+		double b_length = Segment(modelTopLine[i].start(), Vector2F(modelTopLine[i].start().X(), topSegment.start().Y())).length();
+		holeSquad += a_length * b_length;
+	}
+
+	return (float)holeSquad;
+}
+
+std::vector<const RectangleF*> FieldController::FindIntersectedRectangles(const RectangleF* pRectangle, const RectangleDB& rectangleDB, bool bDirection)
 {
 	std::vector<const RectangleF*> res;
 
@@ -133,4 +243,23 @@ const RectangleF* FieldController::FindClosestRectangles(RectangleF* pRectangle,
 	}
 
 	return pResultModel;
+}
+
+const size_t FieldController::FindBigestHolePosition( const RectangleDB& rectangleDB )
+{
+	float fMaxHoleSquad = 0;
+	size_t crossPoint = 0;
+
+	for (size_t i = 0, i_end = rectangleDB.Size(); i < i_end; ++i)
+	{
+		const RectangleF* pRect = rectangleDB[i];
+		float tmpSquad = GetHoleSquad(pRect, rectangleDB);
+		if (fMaxHoleSquad < tmpSquad)
+		{
+			fMaxHoleSquad = tmpSquad;
+			crossPoint = i;
+		}
+	}
+
+	return crossPoint;
 }

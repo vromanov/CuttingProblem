@@ -10,6 +10,7 @@
 #include "wx/wx.h"
 
 #include <ctime>
+#include <vector>
 
 class Threadable;
 class RectangleDrawer;
@@ -24,21 +25,12 @@ public:
 	void	Run();
 	
 private:
-	enum STATE
-	{
-		NONE = 0,
-		PLACEMENT,
-		CROSSINGOVER,
-		MUTATOR,
-		SELECTOR,
-	};
 	
 	template<typename T>
 	void				DoRun(T* pClass);
+	void				RunStep(const char* pName);
 	virtual void		OnThreadsFinish();
 
-	STATE				m_CurrentState;
-	wxCriticalSection	m_CriticalSection;
 	clock_t				m_Start, m_End;
 
 	ThreadsManager		m_ThreadManager;
@@ -46,8 +38,16 @@ private:
 
 	Population*			m_pPopulation;
 	bool				m_bTimeStarted;
+	
+	std::vector<const char*>	m_StateQueue;
+	size_t						m_uiCurrentState;
 
-	static size_t		s_iCurrentIterationCount;
+	std::vector<const char*>	m_TestFiles;
+	std::vector<const char*>	m_TestConfigs;
+	size_t						m_uiTestRepeat;
+
+	static size_t				s_iCurrentIterationCount;
+	static wxCriticalSection	s_CriticalSection;
 
 };
 
@@ -67,7 +67,8 @@ void MainController::DoRun(T* pClass)
 		double time = (double)(m_End - m_Start) / CLOCKS_PER_SEC;
 		if (m_pPopulation->GetChromosomes().size() > 0)
 		{
-			m_pRectangleDrawer->Draw((*(m_pPopulation->GetChromosomes().begin()))->GetRectangleDB(), time);
+			Chromosome* pBestChromosome = *(m_pPopulation->GetChromosomes().begin());
+			m_pRectangleDrawer->Draw(pBestChromosome->GetRectangleDB(), time, pBestChromosome->FitnessValue());
 		}
 		DB::CleanDB();
 
@@ -75,8 +76,6 @@ void MainController::DoRun(T* pClass)
 		m_bTimeStarted = false;
 		return;
 	}
-	if (m_CurrentState == NONE)
-		m_CurrentState = PLACEMENT;
 
 	m_ThreadManager.Register(this);
 	m_ThreadManager.Run(pClass, m_pPopulation);

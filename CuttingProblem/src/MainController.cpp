@@ -1,7 +1,19 @@
 #include "MainController.h"
 
 #include "AgregatorTopLeft.h"
+
 #include "CrossingoverOX.h"
+#include "CrossingoverPMX.h"
+#include "CrossingoverXuOX.h"
+
+#include "UpPointFitness.h"
+
+#include "MutatorInsert.h"
+#include "MutatorChange.h"
+#include "MutatorXuInsert.h"
+
+#include "SelectorElitarizm.h"
+#include "SelectorRoulette.h"
 
 #include "RectangleDB.h"
 #include "RectangleF.h"
@@ -12,15 +24,37 @@
 
 #include <vector>
 
-size_t MainController::s_iCurrentIterationCount = 0;
-
 MainController::MainController(RectangleDrawer* pRectangleDrawer)
-	: m_CurrentState(NONE)
-	, m_pRectangleDrawer(pRectangleDrawer)
-	, m_pPopulation(NULL)
-	, m_bTimeStarted(false)
+: m_pRectangleDrawer(pRectangleDrawer)
+, m_pPopulation(NULL)
+, m_bTimeStarted(false)
+, m_uiCurrentState(0)
 {
-	return;
+	//m_StateQueue.push_back("OX");
+	//m_StateQueue.push_back("PMX");
+	
+	//m_StateQueue.push_back("Change");
+	m_StateQueue.push_back("TopLeft");
+	m_StateQueue.push_back("XuOX");
+
+	m_StateQueue.push_back("TopLeft");
+	m_StateQueue.push_back("XuInsert");
+
+	m_StateQueue.push_back("TopLeft");
+	m_StateQueue.push_back("UpPoint");
+
+	m_StateQueue.push_back("Roulette");
+
+	//m_StateQueue.push_back("Insert");
+	//m_StateQueue.push_back("Change");
+
+	//m_StateQueue.push_back("TopLeft");
+
+	//m_StateQueue.push_back("UpPoint");
+
+	//m_StateQueue.push_back("Roulette");
+	//m_StateQueue.push_back("TopLeft");
+	//m_StateQueue.push_back("UpPoint");
 }
 
 
@@ -31,52 +65,55 @@ MainController::~MainController(void)
 		m_pPopulation->Clear();
 		delete m_pPopulation;
 	}
-	return;
 }
 
 
 void MainController::OnThreadsFinish()
 {
-	wxLogDebug ("OnThreadsFinish");
+	s_CriticalSection.Enter();
 
-	m_CriticalSection.Enter();
+	RunStep(m_StateQueue[m_uiCurrentState++]);
 
-	CrossingoverOX*		pCrossingover = NULL;
-	AgregatorTopLeft*	pAgregator = NULL;
-
-	switch(m_CurrentState)
+	if (m_uiCurrentState >= m_StateQueue.size())
 	{
-	case CROSSINGOVER:
-		wxLogDebug ("OnThreadsFinish. state == CROSSINGOVER");
+		m_uiCurrentState = 0;
 		++s_iCurrentIterationCount;
-		m_CurrentState = PLACEMENT;
-		DoRun(pCrossingover);
-		break;
-	case MUTATOR:
-		wxLogDebug ("OnThreadsFinish. state == MUTATOR");
-		m_CurrentState = SELECTOR;
-		DoRun(pCrossingover);
-		break;
-	case SELECTOR:
-		wxLogDebug ("OnThreadsFinish. state == SELECTOR");
-		m_CurrentState = NONE;
-		DoRun(pCrossingover);
-		break;
-	case PLACEMENT:
-		wxLogDebug ("OnThreadsFinish. state == PLACEMENT");
-		m_CurrentState = CROSSINGOVER;
-		DoRun(pAgregator);
-		break;
-	default:
-		break;
 	}
 
-	m_CriticalSection.Leave();
+	s_CriticalSection.Leave();
+}
+
+void MainController::RunStep(const char* pName)
+{
+	void* pT = NULL;
+	if (strcmp(pName, "OX") == 0)
+		DoRun((CrossingoverOX*)pT);
+	else if (strcmp(pName, "PMX") == 0)
+		DoRun((CrossingoverPMX*)pT);
+	else if (strcmp(pName, "XuOX") == 0)
+		DoRun((CrossingoverXuOX*)pT);
+	else if (strcmp(pName, "Insert") == 0)
+		DoRun((MutatorInsert*)pT);
+	else if (strcmp(pName, "Change") == 0)
+		DoRun((MutatorChange*)pT);
+	else if (strcmp(pName, "XuInsert") == 0)
+		DoRun((MutatorXuInsert*)pT);
+	else if (strcmp(pName, "TopLeft") == 0)
+		DoRun((AgregatorTopLeft*)pT);
+	else if (strcmp(pName, "UpPoint") == 0)
+		DoRun((UpPointFitness*)pT);
+	else if (strcmp(pName, "Elitarizm") == 0)
+		DoRun((SelectorElitarizm*)pT);
+	else if (strcmp(pName, "Roulette") == 0)
+		DoRun((SelectorRoulette*)pT);
 }
 
 void MainController::Run()
 {
 	wxLogDebug("MainController::Run called");
+
+	m_uiCurrentState = 0;
+	s_iCurrentIterationCount = 0;
 
 	DB::CreateDB("tests/test.txt");
 
@@ -87,7 +124,8 @@ void MainController::Run()
 	}
 	m_pPopulation = Population::GenerateRandPopulation(CHROMOSOME_COUNT);
 
-
-	m_CurrentState = PLACEMENT;
 	OnThreadsFinish();
 }
+
+size_t MainController::s_iCurrentIterationCount = 0;
+wxCriticalSection	MainController::s_CriticalSection;
