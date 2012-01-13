@@ -22,15 +22,23 @@ public:
 	MainController(RectangleDrawer*);
 	~MainController(void);
 	
-	void	Run();
+	void				Run();
+
+
+	// TODO: Move to stats class
+	Chromosome*			GetBestChromosome() {return m_pBestChromosome;}
+	size_t				GetCurrentTestConfig() { return m_uiCurrentTestConfig; }
+	size_t				GetCurrentTestRepeat() { return m_uiCurrentTestRepeat; }
 	
 private:
 	
 	template<typename T>
 	void				DoRun(T* pClass);
-	void				RunStep(const char* pName);
-	virtual void		OnThreadsFinish();
+	void				RunState(const char* pName);
+	void				RunTest(const char* testName);
 
+	virtual void		OnThreadsFinish();
+	
 	clock_t				m_Start, m_End;
 
 	ThreadsManager		m_ThreadManager;
@@ -39,12 +47,18 @@ private:
 	Population*			m_pPopulation;
 	bool				m_bTimeStarted;
 	
-	std::vector<const char*>	m_StateQueue;
+	std::vector<std::string>	m_StateQueue;
 	size_t						m_uiCurrentState;
 
-	std::vector<const char*>	m_TestFiles;
-	std::vector<const char*>	m_TestConfigs;
+	std::vector<std::string>	m_TestFiles;
+	std::vector<std::string>	m_TestConfigs;
 	size_t						m_uiTestRepeat;
+	
+	size_t						m_uiCurrentTestFile;
+	size_t						m_uiCurrentTestConfig;
+	size_t						m_uiCurrentTestRepeat;
+
+	Chromosome*					m_pBestChromosome;
 
 	static size_t				s_iCurrentIterationCount;
 	static wxCriticalSection	s_CriticalSection;
@@ -55,6 +69,8 @@ template<typename T>
 void MainController::DoRun(T* pClass)
 {
 	wxLogDebug("MainController::DoRun iteration = %d", s_iCurrentIterationCount);
+
+	const size_t ITERATION_COUNT = ConfigReader::GetInstance()->GetConfigIntValue("GENERAL_POPULATION_COUNT");
 
 	if (s_iCurrentIterationCount == 0 && !m_bTimeStarted)
 	{
@@ -67,13 +83,14 @@ void MainController::DoRun(T* pClass)
 		double time = (double)(m_End - m_Start) / CLOCKS_PER_SEC;
 		if (m_pPopulation->GetChromosomes().size() > 0)
 		{
-			Chromosome* pBestChromosome = *(m_pPopulation->GetChromosomes().begin());
-			m_pRectangleDrawer->Draw(pBestChromosome->GetRectangleDB(), time, pBestChromosome->FitnessValue());
+			m_pBestChromosome = *(m_pPopulation->GetChromosomes().begin());
+			m_pRectangleDrawer->Draw(this, time);
 		}
 		DB::CleanDB();
 
 		s_iCurrentIterationCount = 0;
 		m_bTimeStarted = false;
+		Run();
 		return;
 	}
 

@@ -5,6 +5,7 @@
 #include "RectangleF.h"
 #include "FieldController.h"
 #include "RectangleDrawer.h"
+#include "ConfigReader.h"
 #include "Utils.h"
 
 #include <vector>
@@ -68,6 +69,10 @@ void AgregatorTopLeft::SetRectangleOnField(RectangleF* pRectangle, const Rectang
 	//ConfigWrap& config = ConfigWrap::GetInstance();
 	//int HEIGHT = config.CanvasHeight(), WIDTH = config.CanvasWidth();	
 	//int VERTICAL_DIRECTION = 1, HORIZONTAL_DIRECTION = 0;
+
+	
+	const size_t HEIGHT = ConfigReader::GetInstance()->GetFileConfigIntValue("CANVAS_HEIGHT");
+	const size_t WIDTH = ConfigReader::GetInstance()->GetFileConfigIntValue("CANVAS_WIDTH");
 
 
 	// STEP 0: initialize left model position

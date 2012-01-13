@@ -3,8 +3,11 @@
 #include "Vector2F.h"
 #include "RectangleF.h"
 #include "RectangleDB.h"
+#include "MainController.h"
+#include "Chromosome.h"
 #include "DB.h"
 #include "Utils.h"
+#include "ConfigReader.h"
 
 #include "wx/graphics.h"
 
@@ -15,6 +18,7 @@ END_EVENT_TABLE()
 RectangleDrawer::RectangleDrawer( wxFrame* pParent, int width, int height )
 : wxPanel(pParent, 0, 0, width, height)
 , m_pRectangleDB(NULL)
+, m_pController(NULL)
 , m_bDoScreenShot(false)
 , m_fTime(0)
 , m_fFitnress(0)
@@ -30,25 +34,31 @@ RectangleDrawer::~RectangleDrawer()
 
 wxBitmap RectangleDrawer::GetScreenShot(wxDC& dc)
 {
-	wxSize screenSize(600, 600);
-	wxBitmap bitmap(screenSize.x, screenSize.y);
+	const size_t HEIGHT = ConfigReader::GetInstance()->GetFileConfigIntValue("CANVAS_HEIGHT");
+	const size_t WIDTH = ConfigReader::GetInstance()->GetFileConfigIntValue("CANVAS_WIDTH");
+	const size_t SCALING_COEFF = ConfigReader::GetInstance()->GetFileConfigIntValue("CANVAS_SCALE");
+	const size_t SHIFT = ConfigReader::GetInstance()->GetFileConfigIntValue("CANVAS_SHIFT");
+
+	wxSize screenSize(wxGetDisplaySize().x + SHIFT, wxGetDisplaySize().y + SHIFT);
+	wxBitmap bitmap(WIDTH * SCALING_COEFF + SHIFT, HEIGHT * SCALING_COEFF + SHIFT);
 	wxMemoryDC memDC;
 	memDC.SelectObject(bitmap);
 	memDC.Blit(0, 0, wxGetDisplaySize().x, 
-		wxGetDisplaySize().y + 100, & dc, 0, 0);
+		wxGetDisplaySize().y, &dc, 0, 0);
 	memDC.SelectObject(wxNullBitmap);
 	return bitmap;
 }
 
-void RectangleDrawer::Draw( const RectangleDB& rectangleDB, float fTime, float fFitness)
+void RectangleDrawer::Draw(MainController* pCtrl, float fTime)
 {
+	m_pController = pCtrl;
 	m_fTime = fTime;
-	m_fFitnress = fFitness;
+	m_fFitnress = pCtrl->GetBestChromosome()->FitnessValue();
 
 	if (m_pRectangleDB)
 		delete m_pRectangleDB;
 
-	m_pRectangleDB = new RectangleDB(rectangleDB);
+	m_pRectangleDB = new RectangleDB(pCtrl->GetBestChromosome()->GetRectangleDB());
 	m_bDoScreenShot = true;
 
 	wxPaintEvent event;
@@ -57,6 +67,9 @@ void RectangleDrawer::Draw( const RectangleDB& rectangleDB, float fTime, float f
 
 void RectangleDrawer::DrawRectangle(wxDC& dc, const Vector2F& topLeft, const Vector2F& bottomRight)
 {
+	const size_t SCALING_COEFF = ConfigReader::GetInstance()->GetFileConfigIntValue("CANVAS_SCALE");
+	const size_t SHIFT = ConfigReader::GetInstance()->GetFileConfigIntValue("CANVAS_SHIFT");
+
 	dc.SetBrush(wxColor(80, 190, 235));
 	dc.SetPen( wxPen( wxColor(80,150,235), 2 ) );
 	dc.DrawRectangle(topLeft.X() * SCALING_COEFF + SHIFT, topLeft.Y() * SCALING_COEFF + SHIFT, (bottomRight.X() - topLeft.X()) * SCALING_COEFF, (bottomRight.Y() - topLeft.Y()) * SCALING_COEFF);
@@ -97,9 +110,12 @@ void RectangleDrawer::OnPaint( wxPaintEvent& WXUNUSED(event) )
 	}
 	if (m_bDoScreenShot)
 	{
-		char str[32];
+		char str[128];
 		wxDateTime now = wxDateTime::Now();
-		sprintf_s(str, "screenshots/%s.bmp", now.Format("%H.%M.%S", wxDateTime::CEST).c_str());
+		sprintf_s(str, "screenshots/%sconf%drepeat%d.bmp", 
+			now.Format("%H.%M.%S", wxDateTime::CEST).c_str(), 
+			m_pController->GetCurrentTestConfig(),
+			m_pController->GetCurrentTestRepeat());
 		GetScreenShot(dc).SaveFile(str, wxBITMAP_TYPE_BMP);
 		m_bDoScreenShot = false;
 	}

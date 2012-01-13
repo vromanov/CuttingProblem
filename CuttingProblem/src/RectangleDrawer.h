@@ -5,11 +5,12 @@
 #include "wx/wx.h"
 
 class Vector2F;
+class MainController;
 
 class RectangleDrawer : public wxPanel
 {
 public:
-	void		Draw( const RectangleDB& rectangleDB, float fTime, float fFitness);
+	void		Draw(MainController* pCtrl, float fTime);
 	
 	static RectangleDrawer*	CreateDrawer(wxFrame* pParent = NULL, int width = 100, int height = 100);
 	static void				DeleteDrawer();
@@ -27,6 +28,7 @@ private:
 	void					DrawFitness(wxDC& dc, float fFitness);
 
 	RectangleDB*			m_pRectangleDB;
+	MainController*			m_pController;
 	bool					m_bDoScreenShot;
 	float					m_fTime;
 	float					m_fFitnress;
