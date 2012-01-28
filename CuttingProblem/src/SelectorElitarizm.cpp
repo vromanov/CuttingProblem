@@ -2,6 +2,7 @@
 #include "Population.h"
 #include "Chromosome.h"
 #include "Utils.h"
+#include "ConfigReader.h"
 
 #include "wx/wx.h"
 
@@ -34,6 +35,7 @@ void SelectorElitarizm::DoEntry( void )
 		// do something in one thread
 		std::sort(m_pPopulation->GetChromosomes().begin(), m_pPopulation->GetChromosomes().end(), SortChromosomeByFitnessValue);
 
+		const size_t CHROMOSOME_BEST_COUNT = ConfigReader::GetInstance()->GetFileConfigIntValue("BEST_CHROMOSOMES");
 		for (size_t i = CHROMOSOME_BEST_COUNT, i_end = m_pPopulation->GetChromosomes().size(); i < i_end; ++i)
 		{
 			// delete unnecessary chromosomes

@@ -222,7 +222,7 @@ const RectangleF* FieldController::FindClosestRectangles(RectangleF* pRectangle,
 		projectionAxis = Vector2F(1, 0);
 
 	Vector2F min, max, modelMin, modelMax;
-	float minLength = 12345678;
+	float minLength = 12345678.f;
 
 	GetProjection(pRectangle, projectionAxis, modelMin, modelMax);
 

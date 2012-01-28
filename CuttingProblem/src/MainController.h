@@ -27,6 +27,7 @@ public:
 
 	// TODO: Move to stats class
 	Chromosome*			GetBestChromosome() {return m_pBestChromosome;}
+	size_t				GetCurrentTestFile() {return m_uiCurrentTestFile; }
 	size_t				GetCurrentTestConfig() { return m_uiCurrentTestConfig; }
 	size_t				GetCurrentTestRepeat() { return m_uiCurrentTestRepeat; }
 	

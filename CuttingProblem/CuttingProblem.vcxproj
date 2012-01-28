@@ -22,39 +22,64 @@
     <ClCompile Include="src\AgregatorTopLeft.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Chromosome.cpp" />
+    <ClCompile Include="src\ConfigReader.cpp" />
     <ClCompile Include="src\CrossingoverOX.cpp" />
+    <ClCompile Include="src\CrossingoverPMX.cpp" />
+    <ClCompile Include="src\CrossingoverXuOX.cpp" />
     <ClCompile Include="src\DB.cpp" />
     <ClCompile Include="src\FieldController.cpp" />
     <ClCompile Include="src\ICrossingover.cpp" />
+    <ClCompile Include="src\IMutator.cpp" />
+    <ClCompile Include="src\ISelector.cpp" />
     <ClCompile Include="src\MainController.cpp" />
     <ClCompile Include="src\MainFrame.cpp" />
     <ClCompile Include="src\Matrix.cpp" />
+    <ClCompile Include="src\MutatorChange.cpp" />
+    <ClCompile Include="src\MutatorInsert.cpp" />
+    <ClCompile Include="src\MutatorXuInsert.cpp" />
     <ClCompile Include="src\Population.cpp" />
     <ClCompile Include="src\RectangleDB.cpp" />
     <ClCompile Include="src\RectangleDrawer.cpp" />
     <ClCompile Include="src\RectangleF.cpp" />
+    <ClCompile Include="src\Segment.cpp" />
+    <ClCompile Include="src\SelectorElitarizm.cpp" />
+    <ClCompile Include="src\SelectorRoulette.cpp" />
     <ClCompile Include="src\Threadable.cpp" />
     <ClCompile Include="src\ThreadsManager.cpp" />
+    <ClCompile Include="src\UpPointFitness.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\AgregatorTopLeft.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Chromosome.h" />
+    <ClInclude Include="src\ConfigReader.h" />
     <ClInclude Include="src\CrossingoverOX.h" />
+    <ClInclude Include="src\CrossingoverPMX.h" />
+    <ClInclude Include="src\CrossingoverXuOX.h" />
     <ClInclude Include="src\DB.h" />
     <ClInclude Include="src\FieldController.h" />
     <ClInclude Include="src\IAgregator.h" />
     <ClInclude Include="src\ICrossingover.h" />
+    <ClInclude Include="src\IFitness.h" />
+    <ClInclude Include="src\IMutator.h" />
+    <ClInclude Include="src\ISelector.h" />
     <ClInclude Include="src\MainController.h" />
     <ClInclude Include="src\MainFrame.h" />
     <ClInclude Include="src\Matrix.h" />
+    <ClInclude Include="src\MutatorChange.h" />
+    <ClInclude Include="src\MutatorInsert.h" />
+    <ClInclude Include="src\MutatorXuInsert.h" />
     <ClInclude Include="src\Population.h" />
     <ClInclude Include="src\RectangleDB.h" />
     <ClInclude Include="src\RectangleDrawer.h" />
     <ClInclude Include="src\RectangleF.h" />
+    <ClInclude Include="src\Segment.h" />
+    <ClInclude Include="src\SelectorElitarizm.h" />
+    <ClInclude Include="src\SelectorRoulette.h" />
     <ClInclude Include="src\Threadable.h" />
     <ClInclude Include="src\ThreadCallback.h" />
     <ClInclude Include="src\ThreadsManager.h" />
+    <ClInclude Include="src\UpPointFitness.h" />
     <ClInclude Include="src\Utils.h" />
     <ClInclude Include="src\Vector2F.h" />
   </ItemGroup>
@@ -107,12 +132,17 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='wxDebug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IntDir>$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_dbg</TargetName>
+    <OutDir>$(SolutionDir)\build\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='wxRelease|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)\build\</OutDir>
+    <TargetName>$(ProjectName)_rls</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

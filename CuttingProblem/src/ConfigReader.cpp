@@ -47,7 +47,7 @@ void ConfigReader::LoadTestConfig( const char* pName )
 		}
 		config.close();
 
-		GenerateTestNames();
+		GenerateTestPath();
 		GenerateTestConfigs();
 	}
 }
@@ -131,7 +131,7 @@ void ConfigReader::ParseLine( const std::string& line, std::map< std::string, st
 	}
 }
 
-void ConfigReader::GenerateTestNames()
+void ConfigReader::GenerateTestPath()
 {
 	char str[128];
 	for (size_t i = 0, i_end = m_Params["TEST_FILE_DIRECTORY"].size(); i < i_end; ++i)
@@ -144,7 +144,7 @@ void ConfigReader::GenerateTestNames()
 					m_Params["TEST_FILE_DIRECTORY"][i].c_str(), 
 					m_Params["TEST_FILE_NAME"][j].c_str(),
 					m_Params["TEST_FILE_FORMAT"][k].c_str());
-				m_TestName.push_back(str);
+				m_TestPath.push_back(str);
 			}
 		}
 	}

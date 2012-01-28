@@ -22,10 +22,10 @@ protected:
 private:
 	void					OnPaint( wxPaintEvent& event );
 	wxBitmap				GetScreenShot(wxDC& dc);
-
-	void					DrawTime(wxDC& dc, float fTime);
+	
+	void					DrawBox(wxDC& dc);
 	void					DrawRectangle(wxDC& dc, const Vector2F& topLeft, const Vector2F& bottomRight);
-	void					DrawFitness(wxDC& dc, float fFitness);
+	void					DrawStats(wxDC& dc);
 
 	RectangleDB*			m_pRectangleDB;
 	MainController*			m_pController;

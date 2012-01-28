@@ -38,7 +38,7 @@ MainController::MainController(RectangleDrawer* pRectangleDrawer)
 {
 	ConfigReader::GetInstance()->LoadTestConfig("test.conf");
 
-	m_TestFiles = ConfigReader::GetInstance()->GetTestNames();
+	m_TestFiles = ConfigReader::GetInstance()->GetTestPath();
 	m_TestConfigs = ConfigReader::GetInstance()->GetTestConfigs();
 	m_uiTestRepeat = ConfigReader::GetInstance()->GetTestRepeat();
 }
@@ -109,6 +109,7 @@ void MainController::RunTest(const char* testName)
 	{
 		m_pPopulation->Clear();
 		delete m_pPopulation;
+		m_pPopulation = NULL;
 	}
 	
 	const char* pValue = ConfigReader::GetInstance()->GetConfigValue("GENERAL_CHROMOSOME_IN_POPULATION").c_str();

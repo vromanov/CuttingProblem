@@ -20,7 +20,8 @@ public:
 	void					LoadTestConfig(const char* pName);
 
 	const std::vector<std::string>&	ReadConfig(const char* pName);
-	const std::vector<std::string>&	GetTestNames() { return m_TestName; }
+
+	const std::vector<std::string>&	GetTestPath() { return m_TestPath; }
 	const std::vector<std::string>&	GetTestConfigs() { return m_TestConfig; }
 	const size_t					GetTestRepeat() { return atoi(m_Params["TEST_REPEAT"][0].c_str());}
 
@@ -29,7 +30,10 @@ public:
 
 	const size_t					GetFileConfigIntValue(const std::string& name) { return atoi(m_FileConfigs[m_CurrentTestFile].fileConfig[name][0].c_str()); }
 
-	void							SetCurrentTestFile(const char* pName) { m_CurrentTestFile = pName; }
+	void							SetCurrentTestFile(const std::string name) { m_CurrentTestFile = name; }
+
+	const std::string&				GetTestName(size_t i) { return m_Params["TEST_FILE_NAME"][i]; }
+
 
 private:
 	ConfigReader(void);
@@ -37,7 +41,7 @@ private:
 	
 	void					ParseLine( const std::string&  line, std::map< std::string, std::vector<std::string> >& params, bool writeSequense = false);
 
-	void					GenerateTestNames();
+	void					GenerateTestPath();
 	void					GenerateTestConfigs();
 
 	std::map< std::string, std::vector<std::string> > m_Params;
@@ -49,7 +53,7 @@ private:
 	bool						m_bActivatedTestConf;
 
 	std::vector<std::string>	m_TestQueue;
-	std::vector<std::string>	m_TestName;
+	std::vector<std::string>	m_TestPath;
 	std::vector<std::string>	m_TestConfig;
 
 	bool						m_bLoopFound;
