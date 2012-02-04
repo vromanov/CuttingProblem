@@ -21,10 +21,11 @@ protected:
 
 private:
 	void					OnPaint( wxPaintEvent& event );
+	void					DoDraw(wxClientDC& dc, bool isInnerInclude = true);
 	wxBitmap				GetScreenShot(wxDC& dc);
 	
 	void					DrawBox(wxDC& dc);
-	void					DrawRectangle(wxDC& dc, const Vector2F& topLeft, const Vector2F& bottomRight);
+	void					DrawRectangle(wxDC& dc, RectangleF* pRectangle, bool isInner, bool isInclude);
 	void					DrawStats(wxDC& dc);
 
 	RectangleDB*			m_pRectangleDB;

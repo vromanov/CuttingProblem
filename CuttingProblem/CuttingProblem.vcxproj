@@ -38,6 +38,7 @@
     <ClCompile Include="src\MutatorInsert.cpp" />
     <ClCompile Include="src\MutatorXuInsert.cpp" />
     <ClCompile Include="src\Population.cpp" />
+    <ClCompile Include="src\Reblocker.cpp" />
     <ClCompile Include="src\RectangleDB.cpp" />
     <ClCompile Include="src\RectangleDrawer.cpp" />
     <ClCompile Include="src\RectangleF.cpp" />
@@ -70,6 +71,7 @@
     <ClInclude Include="src\MutatorInsert.h" />
     <ClInclude Include="src\MutatorXuInsert.h" />
     <ClInclude Include="src\Population.h" />
+    <ClInclude Include="src\Reblocker.h" />
     <ClInclude Include="src\RectangleDB.h" />
     <ClInclude Include="src\RectangleDrawer.h" />
     <ClInclude Include="src\RectangleF.h" />

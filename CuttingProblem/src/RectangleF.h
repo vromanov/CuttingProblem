@@ -4,6 +4,7 @@
 #include "Matrix.h"
 
 #include <string>
+#include <vector>
 
 class RectangleF;
 
@@ -31,9 +32,16 @@ public:
 	const Vector2F&			GetBottomRight() const { return m_MaxPoint; }
 
 	const Vector2F&			GetDimension() const { return m_Dimension; }
+	void					Enlarge( RectangleF* pRectangle );
+	void					Dummy();
+	void					CalculateLocalPosition( Vector2F newPosition );
+
+	std::vector<RectangleF>& GetInnerRectangles() { return m_ConsistOf; }
+	void CalculateMinMax( const Vector2F& position );
 
 private:
 	Vector2F m_InitMinPoint, m_InitMaxPoint, m_Dimension;
 	Vector2F m_MinPoint, m_MaxPoint, m_Position;
 	Status eStatus;
+	std::vector<RectangleF> m_ConsistOf;
 };

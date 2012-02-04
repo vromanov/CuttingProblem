@@ -42,3 +42,18 @@ void RectangleDB::ReInit()
 	DB::CleanDB(m_db);
 	DB::CopyTo(m_db);
 }
+
+void RectangleDB::Wipe()
+{
+	DB::WipeDB(m_db);
+}
+
+void RectangleDB::DeleteRectangle( const size_t index )
+{
+	std::vector<RectangleF*>::iterator it = m_db.begin();
+	std::advance(it, index);
+	//(*it)->Dummy();
+	delete *it;
+	*it = NULL;
+	//m_db.erase(it);
+}

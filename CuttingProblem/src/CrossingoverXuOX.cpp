@@ -22,7 +22,7 @@ CrossingoverXuOX::~CrossingoverXuOX(void)
 size_t CrossingoverXuOX::GetCrossPoint( Chromosome* pParent )
 {
 	FieldController fieldCtrl;
-	size_t crossPoint = fieldCtrl.FindBigestHolePosition(pParent->GetRectangleDB());
+	size_t crossPoint = fieldCtrl.FindBigestHolePosition(pParent);
 
 	if (crossPoint > 0)
 		return crossPoint - 1;

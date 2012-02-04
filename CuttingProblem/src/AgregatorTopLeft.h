@@ -6,6 +6,7 @@
 class Population;
 class RectangleF;
 class RectangleDB;
+class Chromosome;
 
 class AgregatorTopLeft : public IAgregator
 {
@@ -17,7 +18,7 @@ private:
 	virtual void	DoEntry(void);
 	virtual void	DoExit(void);
 
-	void			SetRectangleOnField(RectangleF* pRectangle, const RectangleDB& rectangleDB);
+	void			SetRectangleOnField(RectangleF* pRectangle, Chromosome* pChromosome);
 
 	Population*		m_pPopulation;
 

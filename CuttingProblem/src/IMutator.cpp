@@ -37,7 +37,8 @@ void IMutator::DoEntry(void)
 		s_CriticalSection.Leave();
 
 		DoMutator(pChromosome);
-		pChromosome->ReInitDB();
+		pChromosome->WipeDB();
+		pChromosome->FitnessValue() = -1;
 	}
 }
 

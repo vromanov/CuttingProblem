@@ -20,7 +20,7 @@ void MutatorXuInsert::DoMutator(Chromosome* pChromosome)
 	FieldController fieldCtrl;
 	Chromosome& chromosome = *pChromosome;
 
-	size_t holePosition = fieldCtrl.FindBigestHolePosition(pChromosome->GetRectangleDB());
+	size_t holePosition = fieldCtrl.FindBigestHolePosition(pChromosome);
 	size_t chromosomeSize = chromosome.Size();
 
 	size_t rectPositionAfterHole = rand() % chromosomeSize;
@@ -28,7 +28,7 @@ void MutatorXuInsert::DoMutator(Chromosome* pChromosome)
 		rectPositionAfterHole = rand() % chromosomeSize;
 
 	// if hole exists we get rectangle after hole position
-	if (holePosition != 0 && holePosition != chromosomeSize - 1)
+	if (holePosition != 0 && holePosition < chromosomeSize - 1)
 	{
 		while (rectPositionAfterHole <= holePosition)
 		{

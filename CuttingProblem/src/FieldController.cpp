@@ -2,6 +2,7 @@
 
 #include "RectangleF.h"
 #include "RectangleDB.h"
+#include "Chromosome.h"
 
 #include <iostream>
 
@@ -78,9 +79,9 @@ bool FieldController::Intersect(const RectangleF* m0, const RectangleF* m1, bool
 	return false;
 }
 
-float FieldController::GetHoleSquad(const RectangleF* pRectangle, const RectangleDB& db)
+float FieldController::GetHoleSquad(const RectangleF* pRectangle, Chromosome* pChromosome)
 {
-	std::vector<const RectangleF*> intersectedModels = FindIntersectedRectangles(pRectangle, db, VERTICAL_DIRECTION);
+	std::vector<const RectangleF*> intersectedModels = FindIntersectedRectangles(pRectangle, pChromosome, VERTICAL_DIRECTION);
 
 	if (intersectedModels.empty())
 		return 0;
@@ -189,18 +190,18 @@ float FieldController::HoleSquad( const Segment& topSegment, const std::vector<S
 	return (float)holeSquad;
 }
 
-std::vector<const RectangleF*> FieldController::FindIntersectedRectangles(const RectangleF* pRectangle, const RectangleDB& rectangleDB, bool bDirection)
+std::vector<const RectangleF*> FieldController::FindIntersectedRectangles(const RectangleF* pRectangle, Chromosome* pChromosome, bool bDirection)
 {
 	std::vector<const RectangleF*> res;
 
-	for (int k = 0, k_end = rectangleDB.Size(); k < k_end; ++k)
+	for (int k = 0, k_end = pChromosome->Size(); k < k_end; ++k)
 	{
-		const RectangleF* pRect = rectangleDB[k];
-		if(pRect->GetStatus() == ON_FIELD)
+		const RectangleF* pRect = pChromosome->GetRectangle(pChromosome->GetGene(k));
+		if(pRect && pRect->GetStatus() == ON_FIELD)
 		{
-			if (Intersect(pRectangle, rectangleDB[k], bDirection))
+			if (Intersect(pRectangle, pRect, bDirection))
 			{
-				res.push_back(rectangleDB[k]);
+				res.push_back(pRect);
 			}
 		}
 	}
@@ -209,9 +210,9 @@ std::vector<const RectangleF*> FieldController::FindIntersectedRectangles(const 
 }
 
 
-const RectangleF* FieldController::FindClosestRectangles(RectangleF* pRectangle, const RectangleDB& rectangleDB, bool bDirection)
+const RectangleF* FieldController::FindClosestRectangles(RectangleF* pRectangle, Chromosome* pChromosome, bool bDirection)
 {
-	std::vector<const RectangleF*> pModels = FindIntersectedRectangles(pRectangle, rectangleDB, bDirection);
+	std::vector<const RectangleF*> pModels = FindIntersectedRectangles(pRectangle, pChromosome, bDirection);
 
 	const RectangleF* pResultModel = NULL;
 
@@ -245,15 +246,17 @@ const RectangleF* FieldController::FindClosestRectangles(RectangleF* pRectangle,
 	return pResultModel;
 }
 
-const size_t FieldController::FindBigestHolePosition( const RectangleDB& rectangleDB )
+const size_t FieldController::FindBigestHolePosition(Chromosome* pChromosome )
 {
 	float fMaxHoleSquad = 0;
 	size_t crossPoint = 0;
 
-	for (size_t i = 0, i_end = rectangleDB.Size(); i < i_end; ++i)
+	for (size_t i = 0, i_end = pChromosome->Size(); i < i_end; ++i)
 	{
-		const RectangleF* pRect = rectangleDB[i];
-		float tmpSquad = GetHoleSquad(pRect, rectangleDB);
+		const RectangleF* pRect = pChromosome->GetRectangle(pChromosome->GetGene(i));
+		if (!pRect)
+			continue;
+		float tmpSquad = GetHoleSquad(pRect, pChromosome);
 		if (fMaxHoleSquad < tmpSquad)
 		{
 			fMaxHoleSquad = tmpSquad;

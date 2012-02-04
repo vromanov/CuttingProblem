@@ -16,7 +16,7 @@ public:
 
 	const Vector2F operator- (const Vector2F& v) const { return Vector2F(X() - v.X(), Y() - v.Y()); }
 	const Vector2F operator+ (const Vector2F& v) const { return Vector2F(X() + v.X(), Y() + v.Y()); }
-	const Vector2F operator* (const Vector2F& v) const { return Vector2F(X() * v.X(), Y() * v.Y()); }
+	const Vector2F operator* (const float& v) const { return Vector2F(X() * v, Y() * v); }
 
 	bool operator<( const Vector2F& v ) const { return (X() <= v.X() && Y() <= v.Y()); }
 	bool operator>( const Vector2F& v ) const { return (X() >= v.X() && Y() >= v.Y()); }

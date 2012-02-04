@@ -18,6 +18,9 @@ void MutatorInsert::DoMutator(Chromosome* pChromosome)
 {
 	Chromosome& chromosome = *pChromosome;
 
+	if (chromosome.Size() < 2)
+		return;
+
 	int position0 = rand() % chromosome.Size();
 	int position1 = rand() % chromosome.Size();
 	while (position1 == position0)

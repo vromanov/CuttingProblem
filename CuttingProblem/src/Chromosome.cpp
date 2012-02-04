@@ -45,6 +45,7 @@ Chromosome& Chromosome::operator=(const Chromosome& pChromosome)
 	const int CHROMOSOME_SIZE = pChromosome->m_RectanglePlacement.Size();
 	for (int i = 0; i < CHROMOSOME_SIZE; ++i)
 		pChromosome->m_iRectangleQueue.push_back(i);
+
 	int i = 0;
 	while (i < CHROMOSOME_SIZE)
 	{
@@ -56,6 +57,7 @@ Chromosome& Chromosome::operator=(const Chromosome& pChromosome)
 
 		++i;
 	}
+
 	return pChromosome;
 }
 
@@ -77,4 +79,15 @@ void Chromosome::ReInitDB()
 {
 	m_RectanglePlacement.ReInit();
 	SetPlacement(false);
+}
+
+void Chromosome::WipeDB()
+{
+	m_RectanglePlacement.Wipe();
+	SetPlacement(false);
+}
+
+void Chromosome::DeleteRectangle( const size_t index )
+{
+	m_RectanglePlacement.DeleteRectangle(index);
 }

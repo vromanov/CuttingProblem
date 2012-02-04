@@ -48,7 +48,7 @@ void AgregatorTopLeft::DoEntry( void )
 			if (pRectangle->GetStatus() == FREE)
 			{
 				pRectangle->SetPosition(pRectangle->GetBottomRight());
-				SetRectangleOnField(pRectangle, pChromosome->GetRectangleDB());
+				SetRectangleOnField(pRectangle, pChromosome);
 				pRectangle->SetStatus(ON_FIELD);
 			}
 		}
@@ -64,7 +64,7 @@ void AgregatorTopLeft::DoExit( void )
 }
 
 
-void AgregatorTopLeft::SetRectangleOnField(RectangleF* pRectangle, const RectangleDB& rectangleDB)
+void AgregatorTopLeft::SetRectangleOnField(RectangleF* pRectangle, Chromosome* pChromosome)
 {
 	//ConfigWrap& config = ConfigWrap::GetInstance();
 	//int HEIGHT = config.CanvasHeight(), WIDTH = config.CanvasWidth();	
@@ -85,7 +85,7 @@ void AgregatorTopLeft::SetRectangleOnField(RectangleF* pRectangle, const Rectang
 		Vector2F newModelPosition = currentModelPosition;
 	
 		FieldController modelCtrl;
-		const RectangleF* pClosestDownModel = modelCtrl.FindClosestRectangles(pRectangle, rectangleDB, VERTICAL_DIRECTION);
+		const RectangleF* pClosestDownModel = modelCtrl.FindClosestRectangles(pRectangle, pChromosome, VERTICAL_DIRECTION);
 		
 		// try to move down
 		if (!pClosestDownModel)
@@ -104,7 +104,7 @@ void AgregatorTopLeft::SetRectangleOnField(RectangleF* pRectangle, const Rectang
 
 			// calculate the max possible left position of model
 			FieldController modelCtrl;
-			const RectangleF* pClosestLeftModel = modelCtrl.FindClosestRectangles(pRectangle, rectangleDB, HORIZONTAL_DIRECTION);
+			const RectangleF* pClosestLeftModel = modelCtrl.FindClosestRectangles(pRectangle, pChromosome, HORIZONTAL_DIRECTION);
 
 			if (!pClosestLeftModel)
 			{

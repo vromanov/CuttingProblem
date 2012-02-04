@@ -28,8 +28,7 @@ void UpPointFitness::DoEntry(void)
 			s_CriticalSection.Leave();
 			continue;
 		}
-		Chromosome* pChromosome = m_pPopulation->GetChromosomes()[s_iChromosomeIndex];
-		++s_iChromosomeIndex;
+		Chromosome* pChromosome = m_pPopulation->GetChromosomes()[s_iChromosomeIndex++];
 		s_CriticalSection.Leave();
 
 		if (!pChromosome->IsPlacement())

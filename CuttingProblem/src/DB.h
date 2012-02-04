@@ -13,6 +13,8 @@ public:
 
 	static void	CopyTo(std::vector<RectangleF*>& newDB);
 	static void Copy(const std::vector<RectangleF*>& from, std::vector<RectangleF*>& to);
+
+	static void WipeDB(std::vector<RectangleF*>& db);
 private:
 	DB();
 	~DB();

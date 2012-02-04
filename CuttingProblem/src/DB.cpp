@@ -75,7 +75,9 @@ RectangleF* DB::ParseLineToRectangle( std::string& line )
 	std::vector<RectangleF*>::const_iterator it = from.begin();
 	while (it != from.end())
 	{
-		RectangleF* rectangle = new RectangleF(**it);
+		RectangleF* rectangle = NULL;
+		if (*it)
+			rectangle = new RectangleF(**it);
 		to.push_back(rectangle);
 
 		++it;
@@ -124,4 +126,23 @@ void DB::CleanDB( std::vector<RectangleF*>& db )
 	db.clear();
 }
 
-DB*					DB::s_pDB = NULL;
+void DB::WipeDB( std::vector<RectangleF*>& db )
+{
+	if (db.empty())
+		return;
+
+	Vector2F startPosition(0,0);
+
+	std::vector<RectangleF*>::iterator it = db.begin();
+	while (it != db.end())
+	{
+		if (*it)
+		{
+			(*it)->SetPosition(startPosition);
+			(*it)->SetStatus(FREE);
+		}
+		++it;
+	}
+}
+
+DB* DB::s_pDB = NULL;

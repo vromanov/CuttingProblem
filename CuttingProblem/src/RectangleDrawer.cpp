@@ -11,6 +11,8 @@
 
 #include "wx/graphics.h"
 
+#include <vector>
+
 BEGIN_EVENT_TABLE(RectangleDrawer, wxPanel)
 	//EVT_PAINT(RectangleDrawer::OnPaint)
 END_EVENT_TABLE()
@@ -54,8 +56,8 @@ void RectangleDrawer::Draw(MainController* pCtrl, float fTime)
 {
 	m_pController = pCtrl;
 	m_fTime = fTime;
-	m_fFitnress = pCtrl->GetBestChromosome()->FitnessValue();
-	m_fFitnress = ConfigReader::GetInstance()->GetFileConfigIntValue("CANVAS_HEIGHT") - m_fFitnress;
+	//m_fFitnress = pCtrl->GetBestChromosome()->FitnessValue();
+	m_fFitnress = ConfigReader::GetInstance()->GetFileConfigIntValue("CANVAS_HEIGHT") - pCtrl->GetBestChromosome()->FitnessValue();
 
 	if (m_pRectangleDB)
 		delete m_pRectangleDB;
@@ -83,17 +85,38 @@ void RectangleDrawer::DrawBox(wxDC& dc)
 }
 
 
-void RectangleDrawer::DrawRectangle(wxDC& dc, const Vector2F& topLeft, const Vector2F& bottomRight)
+void RectangleDrawer::DrawRectangle(wxDC& dc, RectangleF* pRectangle, bool isInner, bool isInclude)
 {
 	const size_t SCALING_COEFF = ConfigReader::GetInstance()->GetFileConfigIntValue("CANVAS_SCALE");
 	const size_t SHIFT_X = ConfigReader::GetInstance()->GetFileConfigIntValue("CANVAS_SHIFT_X");
 	const size_t SHIFT_Y = ConfigReader::GetInstance()->GetFileConfigIntValue("CANVAS_SHIFT_Y");
 
+
+	const Vector2F& topLeft = pRectangle->GetTopLeft();
+	const Vector2F& bottomRight = pRectangle->GetBottomRight();
+
 	//dc.SetBrush(wxColor(80, 190, 235));
 	//dc.SetPen( wxPen( wxColor(80,150,235), 2 ) );
-	dc.SetBrush(*wxCYAN_BRUSH); // green filling
-	dc.SetPen( wxPen( wxColor(0, 0, 0), 1 ) ); // 1-pixels-thick red outline
+	if (isInner)
+	{
+		//dc.SetBrush(*wxBLUE_BRUSH); // blue filling
+		dc.SetPen( wxPen( wxColor(0, 0, 0), 1, wxDOT ) ); // 1-pixels-thick red outline
+	}
+	else
+	{
+		dc.SetBrush(*wxCYAN_BRUSH); // green filling
+		dc.SetPen( wxPen( wxColor(0, 0, 0), 1 ) ); // 1-pixels-thick red outline
+	}
 	dc.DrawRectangle(topLeft.X() * SCALING_COEFF + SHIFT_X, topLeft.Y() * SCALING_COEFF + SHIFT_Y, (bottomRight.X() - topLeft.X()) * SCALING_COEFF, (bottomRight.Y() - topLeft.Y()) * SCALING_COEFF);
+
+	if (isInclude)
+	{
+		std::vector<RectangleF>& innerRectangles = pRectangle->GetInnerRectangles();
+		for (size_t i = 0, i_end = innerRectangles.size(); i < i_end; ++i)
+		{
+			DrawRectangle(dc, &innerRectangles[i], true, isInclude);
+		}
+	}
 }
 
 void RectangleDrawer::DrawStats(wxDC& dc)
@@ -115,28 +138,27 @@ void RectangleDrawer::DrawStats(wxDC& dc)
 }
 
 
-void RectangleDrawer::OnPaint( wxPaintEvent& WXUNUSED(event) )
+void RectangleDrawer::DoDraw(wxClientDC& dc, bool isInnerInclude)
 {
-	wxClientDC dc(this);
 	dc.Clear();
-	if (!m_pRectangleDB)
-		return;
-
 	DrawBox(dc);
 	DrawStats(dc);
 
 	for (size_t i = 0, i_end = m_pRectangleDB->Size(); i < i_end; ++i)
 	{
-		if ((*m_pRectangleDB)[i]->GetStatus() == ON_FIELD)
-			DrawRectangle(dc, (*m_pRectangleDB)[i]->GetTopLeft(), (*m_pRectangleDB)[i]->GetBottomRight());
+		if ((*m_pRectangleDB)[i] && (*m_pRectangleDB)[i]->GetStatus() == ON_FIELD)
+		{
+			DrawRectangle(dc, (*m_pRectangleDB)[i], false, isInnerInclude);
+		}
 	}
+
 	if (m_bDoScreenShot)
 	{
 		size_t uiCurrentFile = m_pController->GetCurrentTestFile();
 		const char* fileName = ConfigReader::GetInstance()->GetTestName(uiCurrentFile).c_str();
 		char str[128];
 		wxDateTime now = wxDateTime::Now();
-		sprintf_s(str, "screenshots/time_%s_file_%s_conf_%d_repeat_%d_fit_%4.1f.bmp", 
+		sprintf_s(str, "screenshots/_time_%s_file_%s_conf_%d_repeat_%d_fit_%4.1f.bmp", 
 			now.Format("%H.%M.%S", wxDateTime::CEST).c_str(), 
 			fileName,
 			m_pController->GetCurrentTestConfig()+1,
@@ -145,6 +167,17 @@ void RectangleDrawer::OnPaint( wxPaintEvent& WXUNUSED(event) )
 		GetScreenShot(dc).SaveFile(str, wxBITMAP_TYPE_BMP);
 		m_bDoScreenShot = false;
 	}
+}
+
+void RectangleDrawer::OnPaint( wxPaintEvent& WXUNUSED(event) )
+{
+	wxClientDC dc(this);
+	if (!m_pRectangleDB)
+		return;
+	DoDraw(dc);
+	//Sleep(1000);
+	//m_bDoScreenShot = true;
+	//DoDraw(dc, false);
 }
 
 RectangleDrawer* RectangleDrawer::CreateDrawer(wxFrame* pParent, int width, int height)

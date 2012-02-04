@@ -18,6 +18,8 @@ public:
 	const int			Size() const { return m_db.size(); }
 	void				Clear();
 	void				ReInit();
+	void				Wipe();
+	void				DeleteRectangle( const size_t index );
 private:
 	std::vector<RectangleF*> m_db;
 };

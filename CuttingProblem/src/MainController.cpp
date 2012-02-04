@@ -23,6 +23,8 @@
 #include "Population.h"
 #include "ConfigReader.h"
 
+#include "Reblocker.h"
+
 #include <vector>
 
 MainController::MainController(RectangleDrawer* pRectangleDrawer)
@@ -95,6 +97,8 @@ void MainController::RunState(const char* pName)
 		DoRun((SelectorElitarizm*)pT);
 	else if (strcmp(pValue, "ROULETTE") == 0)
 		DoRun((SelectorRoulette*)pT);
+	else if (strcmp(pValue, "REBLOCK") == 0)
+		DoRun((Reblocker*)pT);
 }
 
 void MainController::RunTest(const char* testName)

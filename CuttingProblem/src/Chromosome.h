@@ -20,6 +20,7 @@ public:
 	void						SetGene(const size_t index, const size_t value) { m_iRectangleQueue[index] = value; }
 	void						InsertGene(const size_t index, const size_t value);
 	void						DeleteGene(const size_t index);
+	void						DeleteRectangle( const size_t index );
 
 	RectangleF*					GetRectangle(const size_t index) { return m_RectanglePlacement[index]; }
 	const RectangleDB&			GetRectangleDB() { return m_RectanglePlacement; }
@@ -31,9 +32,9 @@ public:
     void				        SetPlacement(bool bPlacement) { m_bIsPlacement = bPlacement; }
 
 	void						ReInitDB();
+	void						WipeDB();
 
 	static Chromosome*			GenerateRandChromosome();
-
 private:
     std::vector<int>			m_iRectangleQueue;
 
